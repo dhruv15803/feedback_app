@@ -155,9 +155,28 @@ const getFormById = async (req:Request,res:Response) => {
     }
 }
 
+const getMyForms = async (req:Request,res:Response) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findOne({_id:userId});
+        
+        if(!user) {
+            res.status(401).json({"success":false,"message":"invalid user"});
+            return;
+        }
+        
+        const forms = await Form.find({user_id:user._id}).populate("user_id");
+        res.status(200).json({"success":true,forms});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"success":false,"message":"Internal server error when getting forms"});
+    }
+}
+
 export {
     createForm,
     updateFormTheme,
     getFormAnalytics,
+    getMyForms,
     getFormById,
 }

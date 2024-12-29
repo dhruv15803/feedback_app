@@ -130,4 +130,20 @@ const getFormById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).json({ "success": false, "message": "internal server error when getting form" });
     }
 });
-export { createForm, updateFormTheme, getFormAnalytics, getFormById, };
+const getMyForms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.userId;
+        const user = yield User.findOne({ _id: userId });
+        if (!user) {
+            res.status(401).json({ "success": false, "message": "invalid user" });
+            return;
+        }
+        const forms = yield Form.find({ user_id: user._id }).populate("user_id");
+        res.status(200).json({ "success": true, forms });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ "success": false, "message": "Internal server error when getting forms" });
+    }
+});
+export { createForm, updateFormTheme, getFormAnalytics, getMyForms, getFormById, };
