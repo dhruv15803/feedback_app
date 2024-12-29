@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { User } from "../models/user.model.js";
 import { Form } from "../models/form.model.js";
+import { FormResponse } from "../models/formResponse.model.js";
 const createForm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { field_title1, field_title2, field_title3, theme } = req.body;
@@ -83,4 +84,28 @@ const updateFormTheme = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
 });
-export { createForm, updateFormTheme, };
+const getFormAnalytics = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { formId } = req.params;
+        const userId = req.userId;
+        const user = yield User.findOne({ _id: userId });
+        if (!user) {
+            res.status(401).json({ "success": false, "message": "invalid user" });
+            return;
+        }
+        const form = yield Form.findOne({ _id: formId });
+        if (!form) {
+            res.status(400).json({ "success": false, "message": "form not found" });
+            return;
+        }
+        // get count of responses for this particular form 
+        // that is the total form responses
+        const totalFormResponses = yield FormResponse.countDocuments({ form_id: form._id });
+        res.status(200).json({ "success": true, totalFormResponses });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ "success": false, "message": "internal server error when getting form analytics" });
+    }
+});
+export { createForm, updateFormTheme, getFormAnalytics, };

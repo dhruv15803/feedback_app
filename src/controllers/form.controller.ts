@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { User } from "../models/user.model.js";
 import { Form } from "../models/form.model.js";
+import { FormResponse } from "../models/formResponse.model.js";
 
 type CreateFormRequest =  {
     field_title1: string;
@@ -105,7 +106,33 @@ const updateFormTheme = async (req:Request,res:Response) => {
     }
 }
 
+const getFormAnalytics = async (req:Request,res:Response) => {
+    try {
+        const {formId} = req.params as {formId:string};
+        const userId = req.userId;
+    
+        const user = await User.findOne({_id:userId});
+        if(!user) {
+            res.status(401).json({"success":false,"message":"invalid user"});
+            return;
+        }
+        const form = await Form.findOne({_id:formId});
+        if(!form){
+            res.status(400).json({"success":false,"message":"form not found"});
+            return;
+        }
+        // get count of responses for this particular form 
+        // that is the total form responses
+        const totalFormResponses = await FormResponse.countDocuments({form_id:form._id});
+        res.status(200).json({"success":true,totalFormResponses});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"success":false,"message":"internal server error when getting form analytics"});
+    }
+}
+
 export {
     createForm,
     updateFormTheme,
+    getFormAnalytics,
 }
