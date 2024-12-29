@@ -138,8 +138,26 @@ const getFormAnalytics = async (req:Request,res:Response) => {
     }
 }
 
+const getFormById = async (req:Request,res:Response) => {
+    // can get  created forms by id 
+    // no authenitcated user required
+    try {
+        const {formId} = req.params as {formId:string};
+        const form = await Form.findOne({_id:formId}).populate("user_id");
+        if(!form) {
+            res.status(400).json({"success":false,"message":"form not found"});
+            return;
+        }
+        res.status(200).json({"success":true,form});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"success":false,"message":"internal server error when getting form"});
+    }
+}
+
 export {
     createForm,
     updateFormTheme,
     getFormAnalytics,
+    getFormById,
 }
