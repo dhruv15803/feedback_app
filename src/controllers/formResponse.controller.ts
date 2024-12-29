@@ -46,8 +46,13 @@ const createFormResponse = async (req:Request,res:Response) => {
 const getFormResponses = async (req:Request,res:Response) => {
     try {
         const {formId} = req.params as {formId:string};
+        const {limit,page} = req.query as {page:string;limit:string};
         const userId = req.userId;
-    
+        const limitNum = parseInt(limit);
+        const pageNum =  parseInt(page);
+
+        const skip = pageNum * limitNum - limitNum;
+
         // this is an authenticated endpoint
         // authenticated user can see responses to his/her form
         // can only read responses if the form belongs to him/her
@@ -67,7 +72,8 @@ const getFormResponses = async (req:Request,res:Response) => {
             return;
         }
     
-        const formResponses = await FormResponse.find({form_id:form._id}).populate("form_id");
+        const formResponses = await FormResponse
+        .find({form_id:form._id}).skip(skip).limit(limitNum).populate("form_id");
         res.status(200).json({"success":true,formResponses});
     
     } catch (error) {

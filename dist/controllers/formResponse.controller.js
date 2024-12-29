@@ -41,7 +41,11 @@ const createFormResponse = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const getFormResponses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { formId } = req.params;
+        const { limit, page } = req.query;
         const userId = req.userId;
+        const limitNum = parseInt(limit);
+        const pageNum = parseInt(page);
+        const skip = pageNum * limitNum - limitNum;
         // this is an authenticated endpoint
         // authenticated user can see responses to his/her form
         // can only read responses if the form belongs to him/her
@@ -59,7 +63,8 @@ const getFormResponses = (req, res) => __awaiter(void 0, void 0, void 0, functio
             res.status(401).json({ "success": false, "message": "user not authorized to read responses to this form" });
             return;
         }
-        const formResponses = yield FormResponse.find({ form_id: form._id }).populate("form_id");
+        const formResponses = yield FormResponse
+            .find({ form_id: form._id }).skip(skip).limit(limitNum).populate("form_id");
         res.status(200).json({ "success": true, formResponses });
     }
     catch (error) {
