@@ -125,8 +125,32 @@ const getAuthenticatedUser = async (req:Request,res:Response) => {
     }
 }
 
+const logoutUser = async (req:Request,res:Response) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findOne({_id:userId});
+        if(!user) {
+            res.status(401).json({"success":false,"message":"invalid user"});
+            return;
+        }
+    
+        res.clearCookie("auth_token",{
+            httpOnly:true,
+            secure:process.env.NODE_ENV==="production",
+            sameSite:process.env.NODE_ENV==="production" ? "none":"lax",
+            maxAge:0,
+            path:"/"
+        }).json({"success":true,"message":"user logged out"});
+    
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"sucess":false,"message":"Internal server error when logging out"});
+    }
+}
+
 export {
     registerUser,
     loginUser,
     getAuthenticatedUser,
+    logoutUser,
 }

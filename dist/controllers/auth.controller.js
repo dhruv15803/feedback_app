@@ -111,4 +111,25 @@ const getAuthenticatedUser = (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(500).json({ "sucess": false, "message": "Something went wrong when getting authenticated user" });
     }
 });
-export { registerUser, loginUser, getAuthenticatedUser, };
+const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.userId;
+        const user = yield User.findOne({ _id: userId });
+        if (!user) {
+            res.status(401).json({ "success": false, "message": "invalid user" });
+            return;
+        }
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 0,
+            path: "/"
+        }).json({ "success": true, "message": "user logged out" });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ "sucess": false, "message": "Internal server error when logging out" });
+    }
+});
+export { registerUser, loginUser, getAuthenticatedUser, logoutUser, };
