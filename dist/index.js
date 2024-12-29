@@ -14,6 +14,7 @@ import mongoose from "mongoose";
 import "dotenv/config";
 import authRoutes from "./routes/auth.route.js";
 import formRoutes from "./routes/form.route.js";
+import formResponseRoutes from "./routes/formResponse.route.js";
 const app = express();
 const port = Number(process.env.PORT);
 const connectToDb = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,6 +35,7 @@ app.use(cors({
 }));
 app.use("/auth", authRoutes);
 app.use("/form", formRoutes);
+app.use("/form-response", formResponseRoutes);
 app.get("/test", (req, res) => {
     res.status(200).json({ "success": true, "message": "server working" });
 });

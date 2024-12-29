@@ -5,6 +5,7 @@ import mongoose from "mongoose"
 import "dotenv/config"
 import authRoutes from "./routes/auth.route.js"
 import formRoutes from "./routes/form.route.js"
+import formResponseRoutes from "./routes/formResponse.route.js"
 
 const app:Application = express();
 const port:number = Number(process.env.PORT);
@@ -30,7 +31,7 @@ app.use(cors({
 
 app.use("/auth",authRoutes);
 app.use("/form",formRoutes);
-
+app.use("/form-response",formResponseRoutes);
 
 app.get("/test",(req:Request,res:Response) => {
     res.status(200).json({"success":true,"message":"server working"})
