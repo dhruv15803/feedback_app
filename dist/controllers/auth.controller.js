@@ -10,11 +10,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { isPasswordStrong, validateEmail } from "../utils/auth.utils.js";
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password, profileImageUrl, username } = req.body;
         if (email.trim() === "" || username.trim() === "" || password.trim() === "" || profileImageUrl === "") {
             res.status(400).json({ "success": false, "message": "all fields are necessary" });
+            return;
+        }
+        // validate email , username , password 
+        if (!validateEmail(email.trim())) {
+            res.status(400).json({ "success": false, "message": "Invalid email" });
+            return;
+        }
+        if (!isPasswordStrong(password.trim())) {
+            res.status(400).json({
+                "success": false,
+                "message": "password should have atleast 6 characters,password should have atleast 1 special character,password should have atleast 1 uppercase character "
+            });
+            return;
+        }
+        if (username.trim().length < 3) {
+            res.status(400).json({
+                "success": false,
+                "message": "username should have minimum length of 3",
+            });
             return;
         }
         const user = yield User.find({ $or: [{ email: email.trim().toLowerCase() }, { username: username.trim() }] });
@@ -74,4 +94,19 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
 });
-export { registerUser, loginUser };
+const getAuthenticatedUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.userId;
+        const user = yield User.findById(userId);
+        if (!user) {
+            res.status(400).json({ "success": false, "message": "invalid user" });
+            return;
+        }
+        res.status(200).json({ "success": true, user });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ "sucess": false, "message": "Something went wrong when getting authenticated user" });
+    }
+});
+export { registerUser, loginUser, getAuthenticatedUser, };

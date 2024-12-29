@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
+import { isPasswordStrong, validateEmail } from "../utils/auth.utils.js";
 
 type RegisterUserRequest = {email:string;username:string;password:string;profileImageUrl:string}
 type LoginUserRequest = {email:string,password:string}
@@ -14,7 +15,29 @@ const registerUser = async (req:Request,res:Response) => {
             res.status(400).json({"success":false,"message":"all fields are necessary"});
             return;
         }
-        
+
+        // validate email , username , password 
+        if(!validateEmail(email.trim())) {
+            res.status(400).json({"success":false,"message":"Invalid email"});
+            return;
+        }
+
+        if(!isPasswordStrong(password.trim())) {
+            res.status(400).json({
+                "success":false,
+                "message":"password should have atleast 6 characters,password should have atleast 1 special character,password should have atleast 1 uppercase character "
+            });
+            return;
+        }
+
+        if(username.trim().length < 3) {
+            res.status(400).json({
+                "success":false,
+                "message":"username should have minimum length of 3",
+            });
+            return;
+        }
+
         const user = await User.find({$or:[{email:email.trim().toLowerCase()},{username:username.trim()}]});
         
         if(user.length > 0) {
@@ -53,6 +76,7 @@ const loginUser = async (req:Request,res:Response) => {
         }
     
         const user = await User.findOne({email:email.trim().toLowerCase()});
+        
         if(!user) {
             res.status(400).json({"success":false,"message":"Invalid email or password"});
             return;
@@ -60,6 +84,7 @@ const loginUser = async (req:Request,res:Response) => {
     
         // user with email exists (check password)
         const isPasswordCorrect = await bcrypt.compare(password.trim(),user.password);
+        
         if(!isPasswordCorrect) {
             res.status(400).json({"success":false,"message":"Invalid email or password"});
             return;
@@ -83,7 +108,23 @@ const loginUser = async (req:Request,res:Response) => {
 }
 
 
+const getAuthenticatedUser = async (req:Request,res:Response) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if(!user) {
+            res.status(400).json({"success":false,"message":"invalid user"});
+            return;
+        }
+        res.status(200).json({"success":true,user});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"sucess":false,"message":"Something went wrong when getting authenticated user"});
+    }
+}
+
 export {
     registerUser,
-    loginUser
+    loginUser,
+    getAuthenticatedUser,
 }
