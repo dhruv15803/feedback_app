@@ -4,6 +4,7 @@ import cors from "cors"
 import mongoose from "mongoose"
 import "dotenv/config"
 import authRoutes from "./routes/auth.route.js"
+import formRoutes from "./routes/form.route.js"
 
 const app:Application = express();
 const port:number = Number(process.env.PORT);
@@ -16,6 +17,7 @@ const connectToDb = async () => {
         console.error('DB CONNECTION FAILED:- ',error);
     }
 }
+
 connectToDb();
 
 app.use(express.json());
@@ -27,6 +29,7 @@ app.use(cors({
 
 
 app.use("/auth",authRoutes);
+app.use("/form",formRoutes);
 
 
 app.get("/test",(req:Request,res:Response) => {
