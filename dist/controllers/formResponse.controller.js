@@ -65,7 +65,8 @@ const getFormResponses = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         const formResponses = yield FormResponse
             .find({ form_id: form._id }).skip(skip).limit(limitNum).populate("form_id");
-        res.status(200).json({ "success": true, formResponses });
+        const totalResponses = yield FormResponse.countDocuments({ form_id: form._id });
+        res.status(200).json({ "success": true, formResponses, "numberOfPages": Math.ceil(totalResponses / limitNum) });
     }
     catch (error) {
         console.log(error);
