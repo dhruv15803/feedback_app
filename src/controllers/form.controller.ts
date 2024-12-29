@@ -121,6 +121,13 @@ const getFormAnalytics = async (req:Request,res:Response) => {
             res.status(400).json({"success":false,"message":"form not found"});
             return;
         }
+
+        // can only see analytics for a form if its ur form 
+        if(form.user_id.toString()!==user._id.toString()) {
+            res.status(401).json({"success":false,"message":"user cannot read analytics for this form"});
+            return;
+        }
+
         // get count of responses for this particular form 
         // that is the total form responses
         const totalFormResponses = await FormResponse.countDocuments({form_id:form._id});
