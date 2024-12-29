@@ -53,6 +53,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 1000 * 60 * 60 * 48,
+            path: "/"
         }).json({ "sucess": true, "message": "user registered successfully", "user": newUser });
     }
     catch (error) {
@@ -86,6 +87,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 1000 * 60 * 60 * 48,
+            path: "/"
         }).json({ "sucess": true, "message": "user logged in successfully", "user": user });
     }
     catch (error) {

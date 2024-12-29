@@ -59,6 +59,7 @@ const registerUser = async (req:Request,res:Response) => {
          secure:process.env.NODE_ENV==="production",
          sameSite:process.env.NODE_ENV==="production" ? "none":"lax",
          maxAge:1000*60*60*48,
+         path:"/"
         }).json({"sucess":true,"message":"user registered successfully","user":newUser});
     } catch (error) {
         console.log(error);   
@@ -99,6 +100,7 @@ const loginUser = async (req:Request,res:Response) => {
             secure:process.env.NODE_ENV==="production",
             sameSite:process.env.NODE_ENV==="production" ? "none":"lax",
             maxAge:1000*60*60*48,
+            path:"/"
         }).json({"sucess":true,"message":"user logged in successfully","user":user});
     } catch (error) {
         console.log(error);
