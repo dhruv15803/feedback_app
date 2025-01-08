@@ -102,6 +102,7 @@ const loginUser = async (req:Request,res:Response) => {
             maxAge:1000*60*60*48,
             path:"/"
         }).json({"sucess":true,"message":"user logged in successfully","user":user});
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({"success":false,"message":"Something went wrong when logging in"});

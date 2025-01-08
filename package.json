@@ -17,7 +17,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.2"
+    "mongoose": "^8.9.2",
+    "razorpay": "^2.9.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

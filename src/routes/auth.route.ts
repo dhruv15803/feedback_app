@@ -1,3 +1,6 @@
+
+
+
 import express from "express"
 import { getAuthenticatedUser, loginUser, logoutUser, registerUser } from "../controllers/auth.controller.js";
 import { authenticatedUser } from "../middlewares/auth.middleware.js";

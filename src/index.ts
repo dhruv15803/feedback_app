@@ -6,9 +6,16 @@ import "dotenv/config"
 import authRoutes from "./routes/auth.route.js"
 import formRoutes from "./routes/form.route.js"
 import formResponseRoutes from "./routes/formResponse.route.js"
+import Razorpay from "razorpay";
+import paymentRoutes from "./routes/payment.route.js"
 
 const app:Application = express();
 const port:number = Number(process.env.PORT);
+
+export const razorpay = new Razorpay({
+    key_id:process.env.RAZORPAY_KEY_ID || "",
+    key_secret:process.env.RAZORPAY_KEY_SECRET || "",
+});
 
 const connectToDb = async () => {
     try {
@@ -32,6 +39,7 @@ app.use(cors({
 app.use("/auth",authRoutes);
 app.use("/form",formRoutes);
 app.use("/form-response",formResponseRoutes);
+app.use("/payment",paymentRoutes);
 
 app.get("/test",(req:Request,res:Response) => {
     res.status(200).json({"success":true,"message":"server working"})
