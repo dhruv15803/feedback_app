@@ -18,7 +18,8 @@
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
-    "razorpay": "^2.9.5"
+    "razorpay": "^2.9.5",
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -27,7 +28,6 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mongoose": "^5.11.97",
-    "express": "^4.21.2",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
