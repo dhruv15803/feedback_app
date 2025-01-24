@@ -16,13 +16,13 @@ const createForm = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const userId = req.userId;
         const user = yield User.findOne({ _id: userId });
         if (!user) {
-            res.status(401).json({ "success": false, "message": "invalid user id" });
+            res.status(401).json({ success: false, message: "invalid user id" });
             return;
         }
         if (!field_title1 || !field_title2 || !field_title3) {
             res.status(400).json({
                 success: false,
-                message: "All field titles are required"
+                message: "All field titles are required",
             });
             return;
         }
@@ -31,17 +31,20 @@ const createForm = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             field_title1,
             field_title2,
             field_title3,
-            theme: theme || 'default'
+            theme: theme || "default",
         });
         res.status(201).json({
-            "success": true,
-            "message": "Form created successfully",
+            success: true,
+            message: "Form created successfully",
             form: newForm,
         });
     }
     catch (error) {
         console.log(error);
-        res.status(500).json({ "success": false, "message": "Internal server error while creating form" });
+        res.status(500).json({
+            success: false,
+            message: "Internal server error while creating form",
+        });
     }
 });
 const updateFormTheme = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -51,12 +54,12 @@ const updateFormTheme = (req, res) => __awaiter(void 0, void 0, void 0, function
         const userId = req.userId;
         const user = yield User.findOne({ _id: userId });
         if (!user) {
-            res.status(401).json({ "success": false, "message": "invalid user id" });
+            res.status(401).json({ success: false, message: "invalid user id" });
             return;
         }
         const form = yield Form.findOne({ _id: formId });
         if (!form) {
-            res.status(400).json({ "success": false, "message": "form not found" });
+            res.status(400).json({ success: false, message: "form not found" });
             return;
         }
         if (!theme) {
@@ -69,12 +72,16 @@ const updateFormTheme = (req, res) => __awaiter(void 0, void 0, void 0, function
         // user exists , form exists , theme is not empty
         // to update the form  , the user._id == form.user_id (form has to be user's)
         if (user._id.toString() !== form.user_id.toString()) {
-            res.status(401).json({ "success": false, "message": "user not authorized to edit form" });
+            res
+                .status(401)
+                .json({ success: false, message: "user not authorized to edit form" });
             return;
         }
         form.theme = theme;
         yield form.save();
-        res.status(200).json({ "success": true, "message": "Theme updated successfully", form });
+        res
+            .status(200)
+            .json({ success: true, message: "Theme updated successfully", form });
     }
     catch (error) {
         console.log(error);
@@ -90,44 +97,55 @@ const getFormAnalytics = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const userId = req.userId;
         const user = yield User.findOne({ _id: userId });
         if (!user) {
-            res.status(401).json({ "success": false, "message": "invalid user" });
+            res.status(401).json({ success: false, message: "invalid user" });
             return;
         }
         const form = yield Form.findOne({ _id: formId });
         if (!form) {
-            res.status(400).json({ "success": false, "message": "form not found" });
+            res.status(400).json({ success: false, message: "form not found" });
             return;
         }
-        // can only see analytics for a form if its ur form 
+        // can only see analytics for a form if its ur form
         if (form.user_id.toString() !== user._id.toString()) {
-            res.status(401).json({ "success": false, "message": "user cannot read analytics for this form" });
+            res.status(401).json({
+                success: false,
+                message: "user cannot read analytics for this form",
+            });
             return;
         }
-        // get count of responses for this particular form 
+        // get count of responses for this particular form
         // that is the total form responses
-        const totalFormResponses = yield FormResponse.countDocuments({ form_id: form._id });
-        res.status(200).json({ "success": true, totalFormResponses });
+        const totalFormResponses = yield FormResponse.countDocuments({
+            form_id: form._id,
+        });
+        res.status(200).json({ success: true, totalFormResponses });
     }
     catch (error) {
         console.log(error);
-        res.status(500).json({ "success": false, "message": "internal server error when getting form analytics" });
+        res.status(500).json({
+            success: false,
+            message: "internal server error when getting form analytics",
+        });
     }
 });
 const getFormById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // can get  created forms by id 
+    // can get  created forms by id
     // no authenitcated user required
     try {
         const { formId } = req.params;
         const form = yield Form.findOne({ _id: formId }).populate("user_id");
         if (!form) {
-            res.status(400).json({ "success": false, "message": "form not found" });
+            res.status(400).json({ success: false, message: "form not found" });
             return;
         }
-        res.status(200).json({ "success": true, form });
+        res.status(200).json({ success: true, form });
     }
     catch (error) {
         console.log(error);
-        res.status(500).json({ "success": false, "message": "internal server error when getting form" });
+        res.status(500).json({
+            success: false,
+            message: "internal server error when getting form",
+        });
     }
 });
 const getMyForms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -135,15 +153,60 @@ const getMyForms = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const userId = req.userId;
         const user = yield User.findOne({ _id: userId });
         if (!user) {
-            res.status(401).json({ "success": false, "message": "invalid user" });
+            res.status(401).json({ success: false, message: "invalid user" });
             return;
         }
         const forms = yield Form.find({ user_id: user._id }).populate("user_id");
-        res.status(200).json({ "success": true, forms });
+        res.status(200).json({ success: true, forms });
     }
     catch (error) {
         console.log(error);
-        res.status(500).json({ "success": false, "message": "Internal server error when getting forms" });
+        res.status(500).json({
+            success: false,
+            message: "Internal server error when getting forms",
+        });
     }
 });
-export { createForm, updateFormTheme, getFormAnalytics, getMyForms, getFormById, };
+const deleteForm = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.userId;
+        const { formId } = req.params;
+        const user = yield User.findOne({ _id: userId });
+        if (!user) {
+            res.status(400).json({
+                success: false,
+                message: "invalid user id",
+            });
+            return;
+        }
+        const form = yield Form.findOne({ _id: formId });
+        if (!form) {
+            res.status(400).json({
+                success: false,
+                message: "form not found",
+            });
+            return;
+        }
+        const formAuthorId = form.user_id.toString();
+        if (formAuthorId !== user._id.toString()) {
+            res.status(401).json({
+                success: false,
+                message: "user is not authorized to delete this form",
+            });
+            return;
+        }
+        yield Form.deleteOne({ _id: form._id });
+        res.status(200).json({
+            success: true,
+            message: "form deleted sucessfully",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "internal server error when deleting form",
+        });
+    }
+});
+export { createForm, updateFormTheme, getFormAnalytics, getMyForms, getFormById, deleteForm, };

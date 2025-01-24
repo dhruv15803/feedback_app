@@ -26,10 +26,10 @@ export const razorpay = new Razorpay({
 const connectToDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const conn = yield mongoose.connect(`${process.env.MONGODB_URI}/formApp`);
-        console.log('DB CONNECTED');
+        console.log("DB CONNECTED");
     }
     catch (error) {
-        console.error('DB CONNECTION FAILED:- ', error);
+        console.error("DB CONNECTION FAILED:- ", error);
     }
 });
 connectToDb();
@@ -44,7 +44,7 @@ app.use("/form", formRoutes);
 app.use("/form-response", formResponseRoutes);
 app.use("/payment", paymentRoutes);
 app.get("/test", (req, res) => {
-    res.status(200).json({ "success": true, "message": "server working" });
+    res.status(200).json({ success: true, message: "server working" });
 });
 app.listen(port, () => {
     console.log(`server running at port ${port}`);
